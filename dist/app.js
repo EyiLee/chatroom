@@ -38884,19 +38884,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.default = {
   computed: (0, _extends3.default)({}, (0, _vuex.mapState)(['user'])),
   methods: (0, _extends3.default)({}, (0, _vuex.mapMutations)(['updateUser']), {
+
     signInWithGithub: function signInWithGithub() {
       var _this = this;
 
       var provider = new _firebase2.default.auth.GithubAuthProvider();
       _firebase2.default.auth().signInWithPopup(provider).then(function (auth) {
         _this.updateUser(auth.user);
-        _firebase2.default.database().ref('users/' + auth.user.uid).update({
+        _firebase2.default.database().ref('/users/' + auth.user.uid).update({
           displayName: auth.user.displayName,
           email: auth.user.email,
           photoURL: auth.user.photoURL
         });
       });
     },
+
     signOut: function signOut() {
       _firebase2.default.auth().signOut();
       document.location.reload(true);
@@ -39084,37 +39086,34 @@ exports.default = {
   created: function created() {
     var _this = this;
 
-    _firebase2.default.database().ref('messages').on('child_added', function (snapshot) {
+    _firebase2.default.database().ref('/messages/').on('child_added', function (snapshot) {
       _this.insertMessage(snapshot.val());
     });
-    _firebase2.default.database().ref('users').on('value', function (snapshot) {
-      _lodash2.default.assign(_this.users, snapshot.val());
+    _firebase2.default.database().ref('/users/').once('value').then(function (snapshot) {
+      _this.users = _lodash2.default.assign(snapshot.val());
     });
   },
-
   methods: {
     addMessage: function addMessage() {
-      _firebase2.default.database().ref('messages').push({
-        uid: this.user.uid,
-        text: this.message,
-        timestamp: Date.now()
-      });
+      if (this.message !== _lodash2.default.stubString()) {
+        _firebase2.default.database().ref('/messages/').push({
+          uid: this.user.uid,
+          text: this.message,
+          timestamp: Date.now()
+        });
+      }
+      this.message = _lodash2.default.stubString();
     },
+
     insertMessage: function insertMessage(message) {
-      if (this.messages.length === 0) {
+      if (_lodash2.default.size(this.messages) === 0 || _lodash2.default.last(this.messages).uid !== message.uid) {
         this.messages.push({
           uid: message.uid,
           text: [message.text],
           timestamp: message.timestamp
         });
-      } else if (_lodash2.default.last(this.messages).uid === message.uid) {
-        _lodash2.default.last(this.messages).text.push(message.text);
       } else {
-        this.messages.push({
-          uid: message.uid,
-          text: [message.text],
-          timestamp: message.timestamp
-        });
+        _lodash2.default.last(this.messages).text.push(message.text);
       }
     }
   }
@@ -56265,11 +56264,18 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       key: item.timestamp
     }, [_c('div', {
       staticClass: "media flex-row my-3"
-    }, [_c('img', {
-      staticClass: "avatar rounded d-flex align-self-end"
-    }), _vm._v(" "), _c('div', {
+    }, [(_vm.users[item.uid]) ? _c('img', {
+      staticClass: "avatar rounded d-flex align-self-end mr-3",
+      attrs: {
+        "src": _vm.users[item.uid].photoURL
+      }
+    }) : _vm._e(), _vm._v(" "), _c('div', {
       staticClass: "media-body"
-    }, [_vm._v("\n        " + _vm._s(item.text) + "\n      ")])])])
+    }, _vm._l((item.text), function(text, index) {
+      return _c('p', {
+        key: index
+      }, [_vm._v(_vm._s(text))])
+    }))])])
   }), _vm._v(" "), _c('input', {
     directives: [{
       name: "model",
@@ -56284,6 +56290,10 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       "value": (_vm.message)
     },
     on: {
+      "keyup": function($event) {
+        if (!('button' in $event) && _vm._k($event.keyCode, "enter", 13)) { return null; }
+        _vm.addMessage($event)
+      },
       "input": function($event) {
         if ($event.target.composing) { return; }
         _vm.message = $event.target.value

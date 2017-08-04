@@ -2,13 +2,13 @@
   <div>
     <div v-for="item in messages" :key="item.timestamp">
       <div class="media flex-row my-3">
-        <img class="avatar rounded d-flex align-self-end">
+        <img class="avatar rounded d-flex align-self-end mr-3" v-if="users[item.uid]" :src="users[item.uid].photoURL">
         <div class="media-body">
-          {{ item.text }}
+          <p v-for="(text, index) in item.text" :key="index">{{ text }}</p>
         </div>
       </div>
     </div>
-    <input type="text" v-model="message">
+    <input type="text" v-model="message" @keyup.enter="addMessage">
     <button type="button" @click="addMessage">送出</button>
   </div>
 </template>
@@ -32,37 +32,35 @@ export default {
       'user'
     ])
   },
-  created () {
-    firebase.database().ref('messages').on('child_added', (snapshot) => {
+  created: function () {
+    firebase.database().ref('/messages/').on('child_added', (snapshot) => {
       this.insertMessage(snapshot.val())
     })
-    firebase.database().ref('users').on('value', (snapshot) => {
-      _.assign(this.users, snapshot.val())
+    firebase.database().ref('/users/').once('value').then((snapshot) => {
+      this.users = _.assign(snapshot.val())
     })
   },
   methods: {
     addMessage: function () {
-      firebase.database().ref('messages').push({
-        uid: this.user.uid,
-        text: this.message,
-        timestamp: Date.now()
-      })
+      if (this.message !== _.stubString()) {
+        firebase.database().ref('/messages/').push({
+          uid: this.user.uid,
+          text: this.message,
+          timestamp: Date.now()
+        })
+      }
+      this.message = _.stubString()
     },
+
     insertMessage: function (message) {
-      if (this.messages.length === 0) {
+      if (_.size(this.messages) === 0 || _.last(this.messages).uid !== message.uid) {
         this.messages.push({
           uid: message.uid,
           text: [message.text],
           timestamp: message.timestamp
         })
-      } else if (_.last(this.messages).uid === message.uid) {
-        _.last(this.messages).text.push(message.text)
       } else {
-        this.messages.push({
-          uid: message.uid,
-          text: [message.text],
-          timestamp: message.timestamp
-        })
+        _.last(this.messages).text.push(message.text)
       }
     }
   }

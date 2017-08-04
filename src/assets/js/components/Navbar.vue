@@ -25,17 +25,19 @@ export default {
     ...mapMutations([
       'updateUser'
     ]),
+
     signInWithGithub: function () {
       let provider = new firebase.auth.GithubAuthProvider()
       firebase.auth().signInWithPopup(provider).then((auth) => {
         this.updateUser(auth.user)
-        firebase.database().ref('users/' + auth.user.uid).update({
+        firebase.database().ref('/users/' + auth.user.uid).update({
           displayName: auth.user.displayName,
           email: auth.user.email,
           photoURL: auth.user.photoURL
         })
       })
     },
+
     signOut: function () {
       firebase.auth().signOut()
       document.location.reload(true)
