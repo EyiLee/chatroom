@@ -39089,7 +39089,7 @@ exports.default = {
     _firebase2.default.database().ref('/messages/').on('child_added', function (snapshot) {
       _this.insertMessage(snapshot.val());
     });
-    _firebase2.default.database().ref('/users/').once('value').then(function (snapshot) {
+    _firebase2.default.database().ref('/users/').on('value', function (snapshot) {
       _this.users = _lodash2.default.assign(snapshot.val());
     });
   },

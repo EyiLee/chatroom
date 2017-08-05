@@ -36,7 +36,7 @@ export default {
     firebase.database().ref('/messages/').on('child_added', (snapshot) => {
       this.insertMessage(snapshot.val())
     })
-    firebase.database().ref('/users/').once('value').then((snapshot) => {
+    firebase.database().ref('/users/').on('value', (snapshot) => {
       this.users = _.assign(snapshot.val())
     })
   },
