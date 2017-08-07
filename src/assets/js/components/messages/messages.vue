@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="messages rounded my-2 px-3 py-3" >
+    <div class="messages rounded my-2 px-3 py-3" ref="messages">
       <div v-for="item in messages" :key="item.timestamp">
         <div class="d-flex mb-3" :class="[isUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
           <img class="avatar rounded align-self-end" v-if="users[item.uid]" :src="users[item.uid].photoURL">
@@ -44,6 +44,9 @@
         this.users = _.assign(snapshot.val())
       })
     },
+    updated: function () {
+      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
+    },
     methods: {
       insertMessage: function (message) {
         if (_.size(this.messages) === 0 || _.last(this.messages).uid !== message.uid) {
@@ -84,6 +87,8 @@
   }
   .messages p {
     width: fit-content;
+    min-width: 2rem;
+    text-align: center;
     margin-top: 0rem !important;
     margin-bottom: 0.5rem !important;
     padding: 0.25rem 0.5rem !important;
