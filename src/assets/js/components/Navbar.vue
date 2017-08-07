@@ -11,39 +11,39 @@
 </template>
 
 <script>
-import firebase from 'firebase'
+  import firebase from 'firebase'
 
-import { mapState, mapMutations } from 'vuex'
+  import { mapState, mapMutations } from 'vuex'
 
-export default {
-  computed: {
-    ...mapState([
-      'user'
-    ])
-  },
-  methods: {
-    ...mapMutations([
-      'updateUser'
-    ]),
-
-    signInWithGithub: function () {
-      let provider = new firebase.auth.GithubAuthProvider()
-      firebase.auth().signInWithPopup(provider).then((auth) => {
-        this.updateUser(auth.user)
-        firebase.database().ref('/users/' + auth.user.uid).update({
-          displayName: auth.user.displayName,
-          email: auth.user.email,
-          photoURL: auth.user.photoURL
-        })
-      })
+  export default {
+    computed: {
+      ...mapState([
+        'user'
+      ])
     },
+    methods: {
+      ...mapMutations([
+        'updateUser'
+      ]),
 
-    signOut: function () {
-      firebase.auth().signOut()
-      document.location.reload(true)
+      signInWithGithub: function () {
+        let provider = new firebase.auth.GithubAuthProvider()
+        firebase.auth().signInWithPopup(provider).then((auth) => {
+          this.updateUser(auth.user)
+          firebase.database().ref('/users/' + auth.user.uid).update({
+            displayName: auth.user.displayName,
+            email: auth.user.email,
+            photoURL: auth.user.photoURL
+          })
+        })
+      },
+
+      signOut: function () {
+        firebase.auth().signOut()
+        document.location.reload(true)
+      }
     }
   }
-}
 </script>
 
 <style>

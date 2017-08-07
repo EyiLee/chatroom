@@ -1,45 +1,50 @@
 <template>
-  <div>
-    <Navbar></Navbar>
+  <main>
+    <navbar></navbar>
     <div class="container">
       <div class="row">
         <div class="col col-9">
-          <Messageboard></Messageboard>
+          <messages></messages>
         </div>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script>
-import firebase from 'firebase'
+  import firebase from 'firebase'
 
-import Navbar from './components/Navbar'
-import Messageboard from './components/Messageboard'
+  import navbar from './components/navbar'
+  import messages from './components/messages/messages'
 
-import { mapMutations } from 'vuex'
+  import { mapMutations } from 'vuex'
 
-export default {
-  created () {
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.updateUser(user)
-      }
-    })
-  },
-  methods: {
-    ...mapMutations([
-      'updateUser'
-    ])
-  },
-  components: { Navbar, Messageboard }
-}
+  export default {
+    created () {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          this.updateUser(user)
+        }
+      })
+    },
+    methods: {
+      ...mapMutations([
+        'updateUser'
+      ])
+    },
+    components: { navbar, messages }
+  }
 </script>
 
 <style lang="scss">
-@import '~bootstrap/scss/bootstrap';
-body {
-  padding-top: 60px;
-  padding-bottom: 20px;
-}
+  @import '~bootstrap/scss/bootstrap';
+
+  html, body {
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  body {
+    padding-top: 60px;
+    padding-bottom: 20px;
+  }
 </style>
