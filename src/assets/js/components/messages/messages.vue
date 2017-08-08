@@ -5,9 +5,7 @@
         <div class="d-flex mb-3" :class="[isUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
           <img class="avatar rounded align-self-end" v-if="users[item.uid]" :src="users[item.uid].photoURL">
           <div class="mx-3 my-1">
-            <p class="text-muted rounded" :class="[isUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">
-              {{ text }}
-            </p>
+            <p class="text-muted rounded" :class="[isUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">{{ text }}</p>
           </div>
         </div>
       </div>
@@ -88,7 +86,9 @@
   .messages p {
     width: fit-content;
     min-width: 2rem;
-    text-align: center;
+    text-align: left;
+    white-space: pre-wrap;
+    word-break: break-word;
     margin-top: 0rem !important;
     margin-bottom: 0.5rem !important;
     padding: 0.25rem 0.5rem !important;

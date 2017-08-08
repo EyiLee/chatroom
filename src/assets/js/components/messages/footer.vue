@@ -1,6 +1,6 @@
 <template>
   <div class="input-group">
-    <input type="text" class="form-control" placeholder="輸入訊息並按 Enter 送出" v-model="message" @keyup.enter="addMessage">
+    <textarea class="form-control" placeholder="輸入訊息並按 Enter 送出" v-model="message" @keyup.enter="inputHandler"></textarea>
   </div>
 </template>
 
@@ -22,6 +22,11 @@
       ])
     },
     methods: {
+      inputHandler: function (e) {
+        if (e.keyCode === 13 && !e.shiftKey) {
+          this.addMessage()
+        }
+      },
       addMessage: function () {
         if (this.message !== _.stubString()) {
           firebase.database().ref('/messages/').push({
