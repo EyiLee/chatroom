@@ -2,7 +2,7 @@
   <div>
     <div class="messages rounded my-2 px-3 py-3" ref="messages">
       <div v-for="item in messages" :key="item.timestamp">
-        <div class="d-flex mb-3" :class="[isUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
+        <div class="d-flex mb-3 justify-content-start" :class="[isUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
           <img class="avatar rounded align-self-end" v-if="users[item.uid]" :src="users[item.uid].photoURL">
           <div class="mx-3 my-1">
             <p class="text-muted rounded" :class="[isUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">{{ text }}</p>
