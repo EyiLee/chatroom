@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="messages rounded my-2 px-3 py-3" ref="messages">
-      <div v-for="item in messages" :key="item.timestamp">
+    <div class="messages rounded my-2 px-3 py-3" ref="messages" @scroll="loadMessage">
+      <div v-for="(item, index) in messages" :key="index">
         <div class="d-flex mb-3 justify-content-start" :class="[isUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
           <img class="avatar rounded align-self-end" v-if="users[item.uid]" :src="users[item.uid].photoURL">
           <div class="mx-3 my-1">
@@ -26,7 +26,8 @@
     data () {
       return {
         messages: _.stubArray(),
-        users: _.stubObject()
+        users: _.stubObject(),
+        scrollBottom: 0
       }
     },
     computed: {
@@ -35,7 +36,7 @@
       ])
     },
     created: function () {
-      firebase.database().ref('/messages/').on('child_added', (snapshot) => {
+      firebase.database().ref('/messages/').limitToLast(30).on('child_added', (snapshot) => {
         this.insertMessage(snapshot.val())
       })
       firebase.database().ref('/users/').on('value', (snapshot) => {
@@ -43,7 +44,7 @@
       })
     },
     updated: function () {
-      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
+      this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight - this.scrollBottom
     },
     methods: {
       insertMessage: function (message) {
@@ -51,10 +52,32 @@
           this.messages.push({
             uid: message.uid,
             text: [message.text],
-            timestamp: message.timestamp
+            timestamp: [message.timestamp]
           })
         } else {
           _.last(this.messages).text.push(message.text)
+          _.last(this.messages).timestamp.push(message.timestamp)
+        }
+        this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight
+      },
+      loadMessage: function () {
+        this.scrollBottom = this.$refs.messages.scrollHeight - this.$refs.messages.scrollTop
+        let head = _.head(_.head(this.messages).timestamp) - 1
+        if (this.$refs.messages.scrollTop === 0) {
+          firebase.database().ref('/messages/').orderByChild('timestamp').endAt(head).limitToLast(20).once('value').then((snapshot) => {
+            _.forEachRight(snapshot.val(), (value) => {
+              if (_.size(this.messages) === 0 || _.head(this.messages).uid !== value.uid) {
+                this.messages.unshift({
+                  uid: value.uid,
+                  text: [value.text],
+                  timestamp: [value.timestamp]
+                })
+              } else {
+                _.head(this.messages).text.unshift(value.text)
+                _.head(this.messages).timestamp.unshift(value.timestamp)
+              }
+            })
+          })
         }
       },
       isUser: function (uid) {
