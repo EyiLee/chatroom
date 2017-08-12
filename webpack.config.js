@@ -13,7 +13,7 @@ module.exports = {
       { test: /\.js$/, loader: ['babel-loader', 'eslint-loader'], exclude: /node_modules/ },
       { test: /\.vue$/, loader: ['vue-loader', 'eslint-loader'] },
       { test: /\.json$/, loader: 'json-loader' },
-      { test: /\.scss$/, loader: ['css-loader', 'style-loader', 'sass-loader'] }
+      { test: /\.scss$/, loader: ['css-loader', 'style-loader', 'sass-loader', 'postcss-loader'] }
     ]
   },
   resolve: {

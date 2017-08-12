@@ -1,6 +1,6 @@
 <template>
-  <div class="input-group">
-    <textarea class="message form-control" placeholder="輸入訊息並按 Enter 送出" v-model="message" @keypress.enter="inputHandler"></textarea>
+  <div class="messagesfooter">
+    <textarea class="border-0 px-3 py-2" placeholder="輸入訊息並按 Enter 送出" v-model="message" @keypress.enter="inputHandler"></textarea>
   </div>
 </template>
 
@@ -43,7 +43,26 @@
 </script>
 
 <style>
-  message {
+  .messagesfooter {
+    position: relative;
+    width: 100%;
+    height: 4rem;
+  }
+  .messagesfooter::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+  .messagesfooter textarea {
+    display: block;
+    width: 100%;
+    height: 100%;
     resize: none;
+  }
+  .messagesfooter textarea:focus {
+    outline-style: none;
   }
 </style>

@@ -1,9 +1,9 @@
 <template>
   <main>
     <navbar></navbar>
-    <div class="container">
-      <div class="row">
-        <div class="col col-9">
+    <div class="container-fluid">
+      <div class="row justify-content-md-center">
+        <div class="col col-md-10 col-lg-8 col-xl-6 p-0">
           <messages></messages>
         </div>
       </div>
@@ -17,19 +17,19 @@
   import navbar from './components/navbar'
   import messages from './components/messages/messages'
 
-  import { mapMutations } from 'vuex'
+  import { mapActions } from 'vuex'
 
   export default {
     created () {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-          this.updateUser(user)
+          this.update(user)
         }
       })
     },
     methods: {
-      ...mapMutations([
-        'updateUser'
+      ...mapActions([
+        'update'
       ])
     },
     components: { navbar, messages }
@@ -39,12 +39,10 @@
 <style lang="scss">
   @import '~bootstrap/scss/bootstrap';
 
-  html, body {
-    max-width: 100vw;
-    max-height: 100vh;
-  }
   body {
-    padding-top: 60px;
-    padding-bottom: 20px;
+    background-color: #e9ebee;
+  }
+  main {
+    padding-top: 4rem;
   }
 </style>

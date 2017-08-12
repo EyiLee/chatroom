@@ -1,11 +1,12 @@
 <template>
-  <div>
-    <div class="messages rounded my-2 px-3 py-3" ref="messages" @scroll="loadMessage">
+  <div class="d-flex flex-column">
+    <messagesheader></messagesheader>
+    <div class="messages p-3" ref="messages" @scroll="loadMessage">
       <div v-for="(item, index) in messages" :key="index">
-        <div class="d-flex mb-3 justify-content-start" :class="[isUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
+        <div class="d-flex justify-content-start" :class="[isCurrentUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
           <img class="avatar rounded align-self-end" v-if="users[item.uid]" :src="users[item.uid].photoURL">
           <div class="mx-3 my-1">
-            <p class="text-muted rounded" :class="[isUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">{{ text }}</p>
+            <p class="rounded" :class="[isCurrentUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">{{ text }}</p>
           </div>
         </div>
       </div>
@@ -18,9 +19,10 @@
   import _ from 'lodash'
   import firebase from 'firebase'
 
+  import messagesheader from './header'
   import messagesfooter from './footer'
 
-  import { mapState } from 'vuex'
+  import { mapState, mapGetters } from 'vuex'
 
   export default {
     data () {
@@ -33,6 +35,9 @@
     computed: {
       ...mapState([
         'user'
+      ]),
+      ...mapGetters([
+        'login'
       ])
     },
     created: function () {
@@ -62,29 +67,29 @@
       },
       loadMessage: function () {
         this.scrollBottom = this.$refs.messages.scrollHeight - this.$refs.messages.scrollTop
-        let head = _.head(_.head(this.messages).timestamp) - 1
         if (this.$refs.messages.scrollTop === 0) {
+          let head = _.head(_.head(this.messages).timestamp) - 1
           firebase.database().ref('/messages/').orderByChild('timestamp').endAt(head).limitToLast(20).once('value').then((snapshot) => {
-            _.forEachRight(snapshot.val(), (value) => {
-              if (_.size(this.messages) === 0 || _.head(this.messages).uid !== value.uid) {
+            _.forEachRight(_.assign(snapshot.val()), (message) => {
+              if (_.size(this.messages) === 0 || _.head(this.messages).uid !== message.uid) {
                 this.messages.unshift({
-                  uid: value.uid,
-                  text: [value.text],
-                  timestamp: [value.timestamp]
+                  uid: message.uid,
+                  text: [message.text],
+                  timestamp: [message.timestamp]
                 })
               } else {
-                _.head(this.messages).text.unshift(value.text)
-                _.head(this.messages).timestamp.unshift(value.timestamp)
+                _.head(this.messages).text.unshift(message.text)
+                _.head(this.messages).timestamp.unshift(message.timestamp)
               }
             })
           })
         }
       },
-      isUser: function (uid) {
-        return uid === this.user.uid
+      isCurrentUser: function (uid) {
+        return this.login ? this.user.uid === uid : false
       }
     },
-    components: { messagesfooter }
+    components: { messagesheader, messagesfooter }
   }
 </script>
 
@@ -94,9 +99,9 @@
     height: 40px;
   }
   .messages {
-    max-height: calc(100vh - 180px);
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    overflow-y: auto
+    height: calc(100vh - 8rem);
+    overflow-y: auto;
+    background-color: white;
   }
   .messages .user {
     margin-left: auto;
@@ -111,7 +116,8 @@
     min-width: 2rem;
     text-align: left;
     white-space: pre-wrap;
-    word-break: break-word;
+    word-break: break-all;
+    color: rgba(0,0,0,0.6);
     margin-top: 0rem !important;
     margin-bottom: 0.5rem !important;
     padding: 0.25rem 0.5rem !important;
