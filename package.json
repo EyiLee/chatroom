@@ -38,6 +38,8 @@
     "postcss-loader": "^2.0.6",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
+    "tooltip.js": "^1.1.5",
+    "vue-directive-tooltip": "^1.2.5",
     "vue-loader": "^13.0.2",
     "vue-template-compiler": "^2.4.2",
     "vuex": "^2.3.1",

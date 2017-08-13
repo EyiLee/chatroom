@@ -5,7 +5,9 @@ import App from './App'
 import firebase from 'firebase'
 import config from '../config/config'
 
-import 'bootstrap'
+import Tooltip from 'vue-directive-tooltip'
+
+Vue.use(Tooltip)
 
 firebase.initializeApp(config)
 
