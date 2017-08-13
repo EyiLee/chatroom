@@ -23,7 +23,6 @@
     },
     methods: {
       ...mapActions([
-        'update',
         'signIn',
         'signOut'
       ])

@@ -3,7 +3,7 @@
     <messagesheader></messagesheader>
     <div class="messages p-3" ref="messages" @scroll="loadMessage">
       <div v-for="(item, index) in messages" :key="index">
-        <div class="d-flex justify-content-start" :class="[isCurrentUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
+        <div class="d-flex justify-content-start my-3" :class="[isCurrentUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
           <img class="avatar rounded align-self-end" v-if="users[item.uid]" :src="users[item.uid].photoURL">
           <div class="mx-3 my-1">
             <p class="rounded" :class="[isCurrentUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">{{ text }}</p>
@@ -105,15 +105,17 @@
   }
   .messages .user {
     margin-left: auto;
-    background-color: lavender;
+    color: white;
+    background-color: #3e9bff;
   }
   .messages .others {
     margin-right: auto;    
-    background-color: lightgray;
+    background-color: #e8e8e8;
   }
   .messages p {
     width: fit-content;
     min-width: 2rem;
+    max-width: 24rem;
     text-align: left;
     white-space: pre-wrap;
     word-break: break-all;

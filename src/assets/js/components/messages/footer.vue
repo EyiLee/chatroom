@@ -1,6 +1,9 @@
 <template>
   <div class="messagesfooter">
-    <textarea class="border-0 px-3 py-2" placeholder="輸入訊息並按 Enter 送出" v-model="message" @keypress.enter="inputHandler"></textarea>
+    <textarea v-if="login" class="border-0 px-3 py-2" placeholder="輸入訊息並按 Enter 送出" v-model="message" @keypress.enter="inputHandler"></textarea>
+    <div v-else class="border-0 px-3 py-2">
+      <button type="button" class="btn btn-lg btn-block btn-secondary" @click="signIn()">登入並加入聊天室發言</button>
+    </div>
   </div>
 </template>
 
@@ -8,7 +11,7 @@
   import _ from 'lodash'
   import firebase from 'firebase'
 
-  import { mapState } from 'vuex'
+  import { mapState, mapGetters, mapActions } from 'vuex'
 
   export default {
     data () {
@@ -19,9 +22,15 @@
     computed: {
       ...mapState([
         'user'
+      ]),
+      ...mapGetters([
+        'login'
       ])
     },
     methods: {
+      ...mapActions([
+        'signIn'
+      ]),
       inputHandler: function (e) {
         if (e.keyCode === 13 && !e.shiftKey) {
           e.preventDefault()
