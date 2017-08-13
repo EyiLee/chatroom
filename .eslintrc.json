@@ -1,7 +1,15 @@
 {
+  "env": {
+    "jquery": true
+  },
   "extends": "standard",
-  "plugins": ["vue"],
+  "plugins": [
+    "vue"
+  ],
   "rules": {
     "no-new": "off"
+  },
+  "globals": {
+    "_": true
   }
 }

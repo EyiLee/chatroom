@@ -8,7 +8,6 @@
 </template>
 
 <script>
-  import _ from 'lodash'
   import firebase from 'firebase'
 
   import { mapState, mapGetters, mapActions } from 'vuex'

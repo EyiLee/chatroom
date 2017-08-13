@@ -22,9 +22,7 @@
   export default {
     created () {
       firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          this.update(user)
-        }
+        this.update(user)
       })
     },
     methods: {

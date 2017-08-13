@@ -3,8 +3,6 @@ import Vuex from 'vuex'
 
 import firebase from 'firebase'
 
-import _ from 'lodash'
-
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -33,12 +31,10 @@ export default new Vuex.Store({
           email: auth.user.email,
           photoURL: auth.user.photoURL
         })
-        document.location.reload()
       })
     },
     signOut: function ({commit}) {
       firebase.auth().signOut().then(() => {
-        document.location.reload()
       })
     }
   }

@@ -4,7 +4,7 @@
     <div class="messages p-3" ref="messages" @scroll="loadMessage">
       <div v-for="(item, index) in messages" :key="index">
         <div class="d-flex justify-content-start my-3" :class="[isCurrentUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
-          <img class="avatar rounded align-self-end" v-if="users[item.uid]" :src="users[item.uid].photoURL">
+          <img class="avatar rounded align-self-end" ref="avatar" data-toggle="tooltip" data-placement="top" v-if="users[item.uid]" :src="users[item.uid].photoURL" :title="users[item.uid].email">
           <div class="mx-3 my-1">
             <p class="rounded" :class="[isCurrentUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">{{ text }}</p>
           </div>
@@ -16,7 +16,6 @@
 </template>
 
 <script>
-  import _ from 'lodash'
   import firebase from 'firebase'
 
   import messagesheader from './header'
@@ -50,6 +49,7 @@
     },
     updated: function () {
       this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight - this.scrollBottom
+      $('.avatar').tooltip()
     },
     methods: {
       insertMessage: function (message) {
