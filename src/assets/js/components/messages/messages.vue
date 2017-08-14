@@ -4,7 +4,7 @@
     <div class="messages p-3" ref="messages" @scroll="loadMessage">
       <div v-for="(item, index) in messages" :key="index">
         <div class="d-flex justify-content-start my-3" :class="[isCurrentUser(item.uid) ? 'flex-row-reverse' : 'flex-row']">
-          <img class="avatar rounded align-self-end" v-if="users[item.uid]" :src="users[item.uid].photoURL" v-tooltip.top="users[item.uid].email">
+          <img class="avatar rounded align-self-end" data-toggle="tooltip" v-if="users[item.uid]" :src="users[item.uid].photoURL" :data-original-title="users[item.uid].email">
           <div class="mx-3 my-1">
             <p class="rounded" :class="[isCurrentUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">{{ text }}</p>
           </div>
@@ -49,6 +49,7 @@
     },
     updated: function () {
       this.$refs.messages.scrollTop = this.$refs.messages.scrollHeight - this.scrollBottom
+      $('[data-toggle="tooltip"]').tooltip()
     },
     methods: {
       insertMessage: function (message) {
@@ -68,7 +69,7 @@
         this.scrollBottom = this.$refs.messages.scrollHeight - this.$refs.messages.scrollTop
         if (this.$refs.messages.scrollTop === 0) {
           let head = _.head(_.head(this.messages).timestamp) - 1
-          firebase.database().ref('/messages/').orderByChild('timestamp').endAt(head).limitToLast(20).once('value').then((snapshot) => {
+          firebase.database().ref('/messages/').orderByChild('timestamp').endAt(head).limitToLast(30).once('value').then((snapshot) => {
             _.forEachRight(_.assign(snapshot.val()), (message) => {
               if (_.size(this.messages) === 0 || _.head(this.messages).uid !== message.uid) {
                 this.messages.unshift({

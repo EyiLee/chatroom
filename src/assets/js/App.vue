@@ -36,7 +36,6 @@
 
 <style lang="scss">
   @import '~bootstrap/scss/bootstrap';
-  @import "~vue-directive-tooltip/src/css/index.scss";
 
   body {
     background-color: #e9ebee;
