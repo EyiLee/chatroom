@@ -4,10 +4,10 @@
     <div class="body p-3" ref="body" @scroll="loadMessage">
       <div v-for="(item, index) in messages" :key="index" v-if="users[item.uid]">
         <div :class="[isCurrentUser(item.uid) ? 'user' : 'others']">
-          <img class="avatar rounded align-self-end" data-toggle="tooltip" :src="users[item.uid].photoURL" :data-original-title="users[item.uid].email">
+          <img class="avatar rounded align-self-end" data-toggle="tooltip" data-container=".body" :src="users[item.uid].photoURL" :data-original-title="users[item.uid].email">
           <div class="mx-3 my-1">
             <span class="title">{{ users[item.uid].email }}</span>
-            <p class="rounded mb-1" :class="[isCurrentUser(item.uid) ? 'user' : 'others']" v-for="(text, index) in item.text" :key="index">
+            <p class="rounded mb-1" v-for="(text, index) in item.text" :key="index">
               <messagestext :text="text"></messagestext>
             </p>
           </div>
